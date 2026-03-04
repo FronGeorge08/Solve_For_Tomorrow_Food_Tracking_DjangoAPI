@@ -23,7 +23,6 @@ class Product(models.Model):
     def __str__(self):
         return f"{self.name} ({self.barcode})"
 
-
 # ❗ NOT A DATABASE MODEL
 class OpenFoodFactsProduct:
     def __init__(
@@ -51,7 +50,6 @@ class OpenFoodFactsProduct:
         self.proteins = proteins
         self.salt = salt
         self.expiration_date = expiration_date
-
     @classmethod
     def from_api_response(cls, data: dict):
         product = data.get("product", {})
