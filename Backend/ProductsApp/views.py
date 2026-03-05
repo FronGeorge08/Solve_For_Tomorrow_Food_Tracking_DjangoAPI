@@ -10,7 +10,6 @@ from .services import save_product_from_barcode
 from django.utils import timezone
 from datetime import timedelta
 
-
 class ProductHandler(APIView):
     """
     Handles:
@@ -40,7 +39,6 @@ class ProductHandler(APIView):
             ProductSerializer(product).data,
             status=status.HTTP_201_CREATED
         )
-
     # ---------------------- GET ALL ----------------------
     def get(self, request):
         products = Product.objects.all()
@@ -53,7 +51,7 @@ class ProductHandlerWithId(APIView):
     - PUT    /products/{id}/
     - DELETE /products/{id}/
     """
-
+    
     # ---------------------- GET BY ID ----------------------
     def get(self, request, id):
         try:
@@ -63,10 +61,8 @@ class ProductHandlerWithId(APIView):
                 {"error": "Product not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
-
         serializer = ProductSerializer(product)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
     # ---------------------- UPDATE ----------------------
     @swagger_auto_schema(request_body=UpdateProductRequest)
     def put(self, request, id):
@@ -77,7 +73,6 @@ class ProductHandlerWithId(APIView):
                 {"error": "Product not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
-
         request_serializer = UpdateProductRequest(data=request.data)
         if not request_serializer.is_valid():
             return Response(

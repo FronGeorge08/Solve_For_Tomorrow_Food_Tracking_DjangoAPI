@@ -1,32 +1,14 @@
-"""
-URL configuration for Backend project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-
 from django.contrib import admin
 from django.urls import path
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from UsersApp.views import UserHandler,UserHandlerWithId
-from ProductsApp.views import ProductHandler,ProductHandlerWithId
-from ProductsApp.views import is_expiring_3days
+
+from UsersApp.views import UserHandler, UserHandlerWithId, RegisterView, LoginView, VerifyEmailView
+from ProductsApp.views import ProductHandler, ProductHandlerWithId, is_expiring_3days
 from UsersApp.authview import MyTokenObtainPairView
-from rest_framework_simplejwt.views import (
-    TokenRefreshView,
-)
+from rest_framework_simplejwt.views import TokenRefreshView
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Your API",
@@ -39,17 +21,48 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=[permissions.AllowAny],
 )
+
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("swagger/", schema_view.with_ui('swagger', cache_timeout=0), name="schema-swagger-ui"),
 
-    path("user/", UserHandler.as_view(), name="user"),
-    path("user_with_id/<str:id>",UserHandlerWithId.as_view(),name="user_ID"),
+    # -------------------- ADMIN --------------------
+    path("admin/", admin.site.urls, name="admin-panel"),
 
-    path("product/", ProductHandler.as_view(), name="product"),                     # POST (create) & GET (all)
-    path("product/<int:id>/", ProductHandlerWithId.as_view(), name="product_id"),  # GET/PUT/DELETE by ID
-    path("get_expiring/",is_expiring_3days,name='get_expiring_products'),
+    # -------------------- API DOCS --------------------
+    path("docs/", schema_view.with_ui('swagger', cache_timeout=0), name="api-docs"),
 
-    path("token/", MyTokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # ==================== USERS ====================
+
+    # Create user / list users
+    path("users/", UserHandler.as_view(), name="users-list-create"),
+
+    # Retrieve / update / delete single user
+    path("users/<int:id>/", UserHandlerWithId.as_view(), name="users-detail"),
+
+    # ==================== PRODUCTS ====================
+
+    # Create product / list products
+    path("products/", ProductHandler.as_view(), name="products-list-create"),
+
+    # Retrieve / update / delete single product
+    path("products/<int:id>/", ProductHandlerWithId.as_view(), name="products-detail"),
+
+    # Expiring products
+    path("products/expiring/", is_expiring_3days, name="products-expiring-soon"),
+
+    # ==================== AUTH ====================
+
+    # Register
+    path("register/", RegisterView.as_view()),
+
+    #Login
+    path("login/", LoginView.as_view()),
+
+    #Email-Verification
+    path("verify-email/", VerifyEmailView.as_view()),
+
+    # JWT Obtain
+    path("auth/token/", MyTokenObtainPairView.as_view(), name="auth-token-obtain"),
+
+    # JWT Refresh
+    path("auth/token/refresh/", TokenRefreshView.as_view(), name="auth-token-refresh"),
 ]
