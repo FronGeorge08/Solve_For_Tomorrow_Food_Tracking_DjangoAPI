@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 
+
 class User(models.Model):
     name = models.CharField(max_length=20)
     username = models.CharField(max_length=20, unique=True)
@@ -8,8 +9,12 @@ class User(models.Model):
     password = models.CharField(max_length=128)
     description = models.CharField(max_length=200)
     image = models.CharField(max_length=1000)
+
     is_active = models.BooleanField(default=True)
     role = models.CharField(max_length=20, default="user")
+
+    is_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=6, null=True, blank=True)
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

@@ -4,7 +4,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from UsersApp.views import UserHandler, UserHandlerWithId, RegisterView, LoginView
+from UsersApp.views import UserHandler, UserHandlerWithId, RegisterView, LoginView, VerifyEmailView
 from ProductsApp.views import ProductHandler, ProductHandlerWithId, is_expiring_3days
 from UsersApp.authview import MyTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
@@ -52,10 +52,13 @@ urlpatterns = [
     # ==================== AUTH ====================
 
     # Register
-    path("auth/register/", RegisterView.as_view(), name="auth-register"),
+    path("register/", RegisterView.as_view()),
 
-    # Login
-    path("auth/login/", LoginView.as_view(), name="auth-login"),
+    #Login
+    path("login/", LoginView.as_view()),
+
+    #Email-Verification
+    path("verify-email/", VerifyEmailView.as_view()),
 
     # JWT Obtain
     path("auth/token/", MyTokenObtainPairView.as_view(), name="auth-token-obtain"),
